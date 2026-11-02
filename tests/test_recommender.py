@@ -46,6 +46,19 @@ def test_recommend_returns_songs_sorted_by_score():
     assert results[0].mood == "happy"
 
 
+def test_ranking_reorders_songs_by_user_taste():
+    user = UserProfile(
+        favorite_genre="lofi",
+        favorite_mood="chill",
+        target_energy=0.4,
+        likes_acoustic=True,
+    )
+    rec = make_small_recommender()  # pop song is listed first
+    results = rec.recommend(user, k=2)
+
+    assert [s.genre for s in results] == ["lofi", "pop"]
+
+
 def test_explain_recommendation_returns_non_empty_string():
     user = UserProfile(
         favorite_genre="pop",

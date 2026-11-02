@@ -17,17 +17,32 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+> Explain your design in plain language.
+> 
+> how Some prompts to answer:
+> - What features does each `Song` use in your system
+>   - For example: genre, mood, energy, tempo
+> - What information does your `UserProfile` store
+> - How does your `Recommender` compute a score for each song
+> - How do you choose which songs to recommend
 
-Some prompts to answer:
+Real-world recommendations focus on behaviors from users, and filtering based on liked genres and songs. A neural network can use vectors and share it to people who may like the same songs as you do.
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+The system ranks candidate songs and albums on a scale using the data from your account (likes, searches, previously liked genres). It will consistently rerank to show new recommendations, thus creating a loop.
 
-You can include a simple diagram or bullet list if helpful.
+For my version, I want to make a bigger emphasis on liked songs and the amount of time spent listening to those songs. I am looking to calculate that score to figure out the users' favorite songs of alltime, and use those related genres to build a recommendation system that may have the same type of sounds.
+
+The `Song` objects will have a focus on the genre, energy, and potentially the BPM to provide the user similar sounding album recommendations. My `UserProfile` will store top genres, energy, and favorite sounds, if possible for the user to favorite certain genres and artists.
+
+### Algorithm Recipe
+| **Weight name**             | **Weight** |
+|-----------------------------|------------|
+| Plays                       | 1.0 (up to x1.25 in favorite genre, growing with plays) |
+| Genre match                 | 1.0        |
+| Genre bonus from song plays | 0.5        |
+| Energy, acoustics, mood     | 4.5        |
+
+Some plausible biases are on how genres are affected, a user whose favorite genre is rock may not enjoy heavy metal. Users may also enjoy songs with various different moods, ex. sad pop and happy rock.
 
 ---
 
@@ -70,13 +85,39 @@ You can add more tests in `tests/test_recommender.py`.
 
 Paste a sample of your recommender's output here as a text block so a reader can see what it produces:
 
-```
-# e.g.:
-# User profile: genre=indie, mood=chill, energy=low
-# Recommendations:
-#   1. ...
-#   2. ...
-#   3. ...
+```zsh
+============================================================
+                    TOP RECOMMENDATIONS                     
+============================================================
+
+1. Sunrise City                                Score:  5.55
+     - energy 0.82 vs target (+1.96)
+     - acousticness fit (+0.98)
+     - mood matches (+1.50)
+     - genre matches (+1.00)
+     - matches search 'neon' (x1.02)
+
+2. Rooftop Lights                              Score:  4.67
+     - played 4x
+     - energy 0.76 vs target (+1.92)
+     - acousticness fit (+0.85)
+     - mood matches (+1.50)
+
+3. Gym Hero                                    Score:  3.59
+     - energy 0.93 vs target (+1.74)
+     - acousticness fit (+0.85)
+     - genre matches (+1.00)
+
+4. Life on Mars?                               Score:  3.15
+     - energy 0.50 vs target (+1.40)
+     - acousticness fit (+0.75)
+     - genre matches (+1.00)
+
+5. Night Drive Loop                            Score:  2.94
+     - energy 0.75 vs target (+1.90)
+     - acousticness fit (+0.98)
+     - matches search 'neon' (x1.02)
+============================================================
 ```
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->
